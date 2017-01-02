@@ -33,7 +33,7 @@ namespace BusinessStoreClient
             _clientid = clientId;
             _authority = authority;
             _clientsecret = clientSecret;
-            //_aquireTokenTask = AcquireTokenAsync().Wait() ;// authority,clientId,clientSecret);
+            AcquireTokenAsync().Wait() ;// authority,clientId,clientSecret);
         }
 
         public async Task<InventoryResultSet> GetInventoryAsync()
@@ -116,15 +116,15 @@ namespace BusinessStoreClient
             var handler = new HttpAuthenticationHandler(ResourceUrl, context, credential);
             try
             {
-            var result = await context.AcquireTokenAsync(ResourceUrl, credential);//.ConfigureAwait(false); ;
-            token = result.AccessToken;
-            authHeader = result.CreateAuthorizationHeader();
-            //client = new HttpClient();
-            Restclient = new HttpClient(handler);
+                var result = await context.AcquireTokenAsync(ResourceUrl, credential).ConfigureAwait(false);
+                token = result.AccessToken;
+                authHeader = result.CreateAuthorizationHeader();
+                //client = new HttpClient();
+                Restclient = new HttpClient(handler);
 
-            Debug.WriteLine(token + "\n");
+                Debug.WriteLine(token + "\n");
 
-            Restclient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                Restclient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 //Restclient.DefaultRequestHeaders.Add("Authorization", authHeader);
 
             }
