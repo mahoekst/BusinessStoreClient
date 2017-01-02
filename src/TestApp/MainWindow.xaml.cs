@@ -27,6 +27,8 @@ namespace TestApp
         private const string Authority = "https://login.windows.net/hoekstraonline.onmicrosoft.com";
         private const string ClientSecret = "hiRARQSQwtI8yUDKjlfORN+3+VIim14kNxca+nC1TWA=";
 
+        private const string downloaddirectory = "c:\\scratch\\businesstore\\";
+
         public MainWindow()
         {
             InitializeComponent();
@@ -48,6 +50,9 @@ namespace TestApp
                 productDetails = await client.GetProductDetailsAsync(entry.ProductKey);
                 productPackgeSet = await client.GetProductPackagesAsync(entry.ProductKey);
                 offlineLicense = await client.GetOffLineLicenseAsync(entry.ProductKey, productPackgeSet.ProductPackages[0]);
+
+                //now download everything in the correct folder
+                //save the offlinelicense blob in an xml file
             }
         }
     }

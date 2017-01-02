@@ -53,7 +53,6 @@
     <Compile Include="ApplicationType.cs" />
     <Compile Include="BusinessStoreClient.cs" />
     <Compile Include="FrameWorkPackageDetails.cs" />
-    <Compile Include="Internal\HttpAuthenticationHandler.cs" />
     <Compile Include="InventoryDistributionPolicy.cs" />
     <Compile Include="InventoryEntryDetails.cs" />
     <Compile Include="InventoryResultSet.cs" />
