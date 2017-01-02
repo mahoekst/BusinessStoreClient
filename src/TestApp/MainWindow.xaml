@@ -8,7 +8,7 @@
         Title="MainWindow" Height="350" Width="525">
     <Grid>
         <Button x:Name="btnStart" Content="Start" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Click="btnStart_Click"/>
-        <TextBlock x:Name="txtResult" HorizontalAlignment="Left" Height="263" Margin="10,46,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Width="480"/>
+        <TextBlock x:Name="txtResult" Margin="0,46,27,10" TextWrapping="Wrap" Text="TextBlock" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True" HorizontalAlignment="Right" Width="480"/>
 
     </Grid>
 </Window>

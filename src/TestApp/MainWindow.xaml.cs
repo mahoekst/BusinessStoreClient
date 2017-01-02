@@ -45,12 +45,18 @@ namespace TestApp
 
             
             inventoryResultSet = await client.GetInventoryAsync();
+            txtResult.Text = String.Format("RESULT: {0} entries found.\n", inventoryResultSet.InventoryEntries.Count());
             foreach (InventoryEntryDetails entry in inventoryResultSet.InventoryEntries)
             {
                 productDetails = await client.GetProductDetailsAsync(entry.ProductKey);
+                txtResult.Text = String.Format("PRODUCTDETAILS:{0}\n", productDetails.PackageFamilyName) + txtResult.Text;
                 productPackgeSet = await client.GetProductPackagesAsync(entry.ProductKey);
-                offlineLicense = await client.GetOffLineLicenseAsync(entry.ProductKey, productPackgeSet.ProductPackages[0]);
-
+                txtResult.Text = String.Format("PRODUCTSETS FOUND FOR THIS PRODUCT:{0}\n", productPackgeSet.ProductPackages.Count) + txtResult.Text;
+                if (entry.LicenseType == LicenseType.Offline)
+                { 
+                    offlineLicense = await client.GetOffLineLicenseAsync(entry.ProductKey, productPackgeSet.ProductPackages[0]);
+                    txtResult.Text = String.Format("OFFLINELICENSE FOUND:{0}\n", offlineLicense.LicenseInstanceId) + txtResult.Text;
+                }
                 //now download everything in the correct folder
                 //save the offlinelicense blob in an xml file
             }

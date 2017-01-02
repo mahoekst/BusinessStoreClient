@@ -19,11 +19,12 @@ namespace BusinessStoreClient
         private const string ResourceUrl = "https://onestore.microsoft.com";
         private const string baseUri = "https://bspmts.mp.microsoft.com/V1";
 
-        private string authHeader;
         private string _clientid;
         private string _authority;
         private string _clientsecret;
+
         private HttpClient Restclient;
+        private string authHeader;
         private string token;
 
         //private Task _aquireTokenTask;
@@ -33,13 +34,13 @@ namespace BusinessStoreClient
             _clientid = clientId;
             _authority = authority;
             _clientsecret = clientSecret;
-            AcquireTokenAsync().Wait() ;// authority,clientId,clientSecret);
+            AcquireTokenAsync().Wait();
         }
 
         public async Task<InventoryResultSet> GetInventoryAsync()
         {
             //await _aquireTokenTask;
-            var url = $"{baseUri}/Inventory?maxresults=2&licenseTypes=offline";
+            var url = $"{baseUri}/Inventory?maxresults=25";// &licenseTypes=offline";
             var response = await Restclient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
@@ -103,6 +104,12 @@ namespace BusinessStoreClient
                 OfflineLicense offlineLicense = JsonConvert.DeserializeObject<OfflineLicense>(s);
                 return offlineLicense;
             }
+            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                //only offline apps will have a offlinelicence. Check your licensetype before calling this method
+                //to optimize your application
+                return null;
+            }
             else
             {
                 throw new Exception(response.StatusCode.ToString());
@@ -113,15 +120,14 @@ namespace BusinessStoreClient
         {
             AuthenticationContext context = new AuthenticationContext(_authority, true);
             var credential = new ClientCredential(_clientid, _clientsecret);
-            //var handler = new HttpAuthenticationHandler(ResourceUrl, context, credential);
+            
             try
             {
                 var result = await context.AcquireTokenAsync(ResourceUrl, credential).ConfigureAwait(false);
                 token = result.AccessToken;
                 authHeader = result.CreateAuthorizationHeader();
                 Restclient = new HttpClient();
-                //Restclient = new HttpClient(handler);
-
+                
                 Debug.WriteLine(token + "\n");
 
                 Restclient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
