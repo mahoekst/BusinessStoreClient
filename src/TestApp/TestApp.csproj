@@ -104,9 +104,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BusinessStoreClient\BusinessStoreClient.csproj">
+    <ProjectReference Include="..\BusinessStoreClient\BusinessStore.csproj">
       <Project>{27c88f89-274f-4d7b-97df-f9d67a8899ef}</Project>
-      <Name>BusinessStoreClient</Name>
+      <Name>BusinessStore</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

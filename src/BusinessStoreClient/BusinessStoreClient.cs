@@ -11,7 +11,7 @@ using System.Threading;
 using Newtonsoft.Json;
 
 
-namespace BusinessStoreClient
+namespace BusinessStore
 {
     public class BusinessStoreClient
     {
@@ -39,8 +39,7 @@ namespace BusinessStoreClient
 
         public async Task<InventoryResultSet> GetInventoryAsync()
         {
-            //await _aquireTokenTask;
-            var url = $"{baseUri}/Inventory?maxresults=25";// &licenseTypes=offline";
+            var url = $"{baseUri}/Inventory?maxresults=25&licenseTypes=offline";
             var response = await Restclient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
@@ -139,29 +138,5 @@ namespace BusinessStoreClient
                 Debug.WriteLine(ex.Message);
             }
         }
-
-        //public async Task AcquireTokenAsync()
-        //{
-        //    AuthenticationContext context = new AuthenticationContext(_authority, true);
-        //    credential = new ClientCredential(_clientId, _clientSecret);
-        //    handler = new HttpAuthenticationHandler(ResourceUrl, context, credential);
-
-        //    var result = await context.AcquireTokenAsync(ResourceUrl, credential);
-        //    //var result = await context.AcquireTokenAsync(ResourceUrl, ClientId, new Uri(RedirectUrl), new PlatformParameters(PromptBehavior.Always));
-        //    token = result.AccessToken;
-        //    authHeader = result.CreateAuthorizationHeader();
-        //    client = new HttpClient();
-        //    //client = new HttpClient(handler);
-
-        //    Console.WriteLine(token + "\n");
-
-        //    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //    client.DefaultRequestHeaders.Add("Authorization", authHeader);
-        //    //var url = $"{baseUri}/Products/a/b";
-        //    //var response = await client.GetAsync(url);
-        //}
-
-
-
     }
 }

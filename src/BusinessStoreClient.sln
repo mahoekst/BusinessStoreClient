@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26014.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessStoreClient", "BusinessStoreClient\BusinessStoreClient.csproj", "{27C88F89-274F-4D7B-97DF-F9D67A8899EF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessStore", "BusinessStoreClient\BusinessStore.csproj", "{27C88F89-274F-4D7B-97DF-F9D67A8899EF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{3FB6B816-9991-455E-ABDE-A8AE334878C8}"
 EndProject

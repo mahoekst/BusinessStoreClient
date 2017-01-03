@@ -1,8 +1,10 @@
-﻿using BusinessStoreClient;
+﻿using BusinessStore;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -36,12 +38,14 @@ namespace TestApp
 
         private async void btnStart_Click(object sender, RoutedEventArgs e)
         {
+            string targetdir = "";
+            string targetfile = "";
             InventoryResultSet inventoryResultSet;
-            ProductPackageSet productPackgeSet;
+            ProductPackageSet productPackageSet;
             ProductDetails productDetails;
             OfflineLicense offlineLicense;
 
-            BusinessStoreClient.BusinessStoreClient client = new BusinessStoreClient.BusinessStoreClient(ClientId,Authority,ClientSecret);
+            BusinessStoreClient client = new BusinessStoreClient(ClientId,Authority,ClientSecret);
 
             
             inventoryResultSet = await client.GetInventoryAsync();
@@ -50,13 +54,63 @@ namespace TestApp
             {
                 productDetails = await client.GetProductDetailsAsync(entry.ProductKey);
                 txtResult.Text = String.Format("PRODUCTDETAILS:{0}\n", productDetails.PackageFamilyName) + txtResult.Text;
-                productPackgeSet = await client.GetProductPackagesAsync(entry.ProductKey);
-                txtResult.Text = String.Format("PRODUCTSETS FOUND FOR THIS PRODUCT:{0}\n", productPackgeSet.ProductPackages.Count) + txtResult.Text;
+                productPackageSet = await client.GetProductPackagesAsync(entry.ProductKey);
+                txtResult.Text = String.Format("PRODUCTSETS FOUND FOR THIS PRODUCT:{0}\n", productPackageSet.ProductPackages.Count) + txtResult.Text;
+                targetdir = downloaddirectory + productDetails.PackageFamilyName;
+                if (!Directory.Exists(targetdir))
+                {
+                    Directory.CreateDirectory(targetdir);
+                }
+
                 if (entry.LicenseType == LicenseType.Offline)
                 { 
-                    offlineLicense = await client.GetOffLineLicenseAsync(entry.ProductKey, productPackgeSet.ProductPackages[0]);
+                    offlineLicense = await client.GetOffLineLicenseAsync(entry.ProductKey, productPackageSet.ProductPackages[0]);
                     txtResult.Text = String.Format("OFFLINELICENSE FOUND:{0}\n", offlineLicense.LicenseInstanceId) + txtResult.Text;
+                    targetfile = targetdir + "\\" + "offlinelicense.bin";
+                    File.WriteAllText(targetfile, offlineLicense.LicenseBlob);
                 }
+                foreach (var productPackage in productPackageSet.ProductPackages)
+                {
+                    HttpClient httpClient = new HttpClient();
+                    HttpResponseMessage response = await httpClient.GetAsync(productPackage.Location.Url);
+                    var httpStream = await response.Content.ReadAsStreamAsync();
+                    targetfile = targetdir + "\\" + productPackage.PackageFullName + "." + productPackage.PackageFormat;
+                    using (var fileStream = File.Create(targetfile))
+                    using (var reader = new StreamReader(httpStream))
+                    {
+                        httpStream.CopyTo(fileStream);
+                        fileStream.Flush();
+                    }
+
+                    if (productPackage.FrameworkDependencyPackages.Count>0)
+                    {
+                        if (!Directory.Exists(targetdir+"\\dependencies"))
+                        {
+                            Directory.CreateDirectory(targetdir+"\\dependencies");
+                        }
+                        foreach (FrameworkPackageDetails frameworkPackageDetails in productPackage.FrameworkDependencyPackages)
+                        {
+                            txtResult.Text = String.Format("DOWNLOADING DEPENDENCY:{0}\n", frameworkPackageDetails.PackageFullName) + txtResult.Text;
+
+                            HttpClient httpClientDependency = new HttpClient();
+                            HttpResponseMessage dependencyresponse = await httpClientDependency.GetAsync(frameworkPackageDetails.Location.Url);
+                            var httpDependencyStream = await dependencyresponse.Content.ReadAsStreamAsync();
+                            targetfile = targetdir + "\\dependencies\\" + "\\" + frameworkPackageDetails.PackageFullName + "." + frameworkPackageDetails.PackageFormat;
+                            using (var fileStream = File.Create(targetfile))
+                            using (var reader = new StreamReader(httpDependencyStream))
+                            {
+                                httpDependencyStream.CopyTo(fileStream);
+                                fileStream.Flush();
+                            }
+
+                        }
+                        
+
+
+                    }
+                }
+
+
                 //now download everything in the correct folder
                 //save the offlinelicense blob in an xml file
             }

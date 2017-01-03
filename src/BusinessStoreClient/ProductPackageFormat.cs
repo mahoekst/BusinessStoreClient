@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessStoreClient
+namespace BusinessStore
 {
     public enum ProductPackageFormat
     {
