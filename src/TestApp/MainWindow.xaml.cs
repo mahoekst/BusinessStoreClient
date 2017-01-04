@@ -74,13 +74,28 @@ namespace TestApp
                     HttpClient httpClient = new HttpClient();
                     HttpResponseMessage response = await httpClient.GetAsync(productPackage.Location.Url);
                     var httpStream = await response.Content.ReadAsStreamAsync();
-                    targetfile = targetdir + "\\" + productPackage.PackageFullName + "." + productPackage.PackageFormat;
+                    if (productPackage.PackageFullName != "")
+                    {
+                        targetfile = targetdir + "\\" + productPackage.PackageFullName + "." + productPackage.PackageFormat;
+                    }
+                    else
+                    {
+                        targetfile = targetdir + "\\" + productPackage.PackageIdentityName + "." + productPackage.PackageFormat;
+
+                    }
                     using (var fileStream = File.Create(targetfile))
                     using (var reader = new StreamReader(httpStream))
                     {
                         httpStream.CopyTo(fileStream);
                         fileStream.Flush();
                     }
+                    httpStream.Close();
+                    httpStream.Dispose();
+                    httpStream = null;
+                    response.Dispose();
+                    response = null;
+                    httpClient.Dispose();
+                    httpClient = null;
 
                     if (productPackage.FrameworkDependencyPackages.Count>0)
                     {
@@ -102,7 +117,13 @@ namespace TestApp
                                 httpDependencyStream.CopyTo(fileStream);
                                 fileStream.Flush();
                             }
-
+                            httpDependencyStream.Close();
+                            httpDependencyStream.Dispose();
+                            httpDependencyStream = null;
+                            dependencyresponse.Dispose();
+                            dependencyresponse = null;
+                            httpClientDependency.Dispose();
+                            httpClientDependency = null;
                         }
                         
 

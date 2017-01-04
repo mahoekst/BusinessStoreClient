@@ -39,7 +39,7 @@ namespace BusinessStore
 
         public async Task<InventoryResultSet> GetInventoryAsync()
         {
-            var url = $"{baseUri}/Inventory?maxresults=25&licenseTypes=offline";
+            var url = $"{baseUri}/Inventory?maxresults=25";//&licenseTypes=offline";
             var response = await Restclient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
