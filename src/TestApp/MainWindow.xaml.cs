@@ -74,6 +74,23 @@ namespace TestApp
                     HttpClient httpClient = new HttpClient();
                     HttpResponseMessage response = await httpClient.GetAsync(productPackage.Location.Url);
                     var httpStream = await response.Content.ReadAsStreamAsync();
+ 
+
+                        string archdir ="";
+                        foreach (ProductArchitectures arc in productPackage.Architectures)
+                        {
+                            archdir = archdir + arc;
+                        }
+                        archdir = archdir + "\\";
+
+                        targetdir = downloaddirectory + productDetails.PackageFamilyName + "\\" + productPackage.Platforms[0].PlatformName + "\\" +  archdir + productPackage.Platforms[0].MinVersion.Build + "\\" + productPackage.Platforms[0].MaxTestedVersion.Build;
+
+                    
+                    if (!Directory.Exists(targetdir))
+                    {
+                        Directory.CreateDirectory(targetdir);
+                    }
+
                     if (productPackage.PackageFullName != "")
                     {
                         targetfile = targetdir + "\\" + productPackage.PackageFullName + "." + productPackage.PackageFormat;
@@ -83,6 +100,7 @@ namespace TestApp
                         targetfile = targetdir + "\\" + productPackage.PackageIdentityName + "." + productPackage.PackageFormat;
 
                     }
+
                     using (var fileStream = File.Create(targetfile))
                     using (var reader = new StreamReader(httpStream))
                     {
